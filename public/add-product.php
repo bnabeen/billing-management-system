@@ -1,0 +1,12 @@
+<?php
+// Add new product form
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product</title>
+</head>
+<body>
+    <h1>Add Product Page</h1>
+</body>
+</html>

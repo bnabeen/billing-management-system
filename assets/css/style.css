@@ -1,0 +1,177 @@
+/* -----------------------------------
+   GLOBAL RESET 
+-------------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: #f5f7fa;
+    color: #333;
+}
+
+/* -----------------------------------
+   PAGE CENTER LAYOUT
+-------------------------------------*/
+.center-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* -----------------------------------
+   AUTH CARD (LOGIN / SIGNUP)
+-------------------------------------*/
+.auth-container {
+    width: 900px;
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* LEFT SIDE IMAGE */
+.auth-left {
+    flex: 1;
+    background: #e9f1f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.auth-left img {
+    width: 85%;
+    max-width: 350px;
+    border-radius: 10px;
+}
+
+/* RIGHT SIDE FORM */
+.auth-right {
+    flex: 1;
+    padding: 50px;
+}
+
+.auth-right h2 {
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.auth-right p {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* -----------------------------------
+   FORM INPUTS
+-------------------------------------*/
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 6px;
+    background: #fff;
+}
+
+.input-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: transparent;
+}
+
+/* -----------------------------------
+   BUTTONS
+-------------------------------------*/
+.btn {
+    width: 100%;
+    background: #1ea64a;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background .2s ease;
+}
+
+.btn:hover {
+    background: #14963d;
+}
+
+/* -----------------------------------
+   ERROR TEXT
+-------------------------------------*/
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* -----------------------------------
+   LINKS
+-------------------------------------*/
+.auth-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.auth-link a {
+    color: #1ea64a;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* -----------------------------------
+   RESPONSIVE (TABLET / MOBILE)
+-------------------------------------*/
+@media (max-width: 850px) {
+    .auth-container {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .auth-left {
+        padding: 20px;
+    }
+
+    .auth-right {
+        padding: 30px;
+    }
+}
+
+/* -----------------------------------
+   SIGNUP PAGE EXTRA SPACING
+-------------------------------------*/
+.auth-right.signup {
+    padding-top: 40px;
+}

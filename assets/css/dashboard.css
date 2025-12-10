@@ -1,0 +1,346 @@
+/* Dashboard Specific Styles */
+:root {
+    --primary-green: #1ea64a;
+    --primary-green-light: #e8f5e9;
+    --bg-color: #f5f7fa;
+    --text-color: #333;
+    --card-bg: #ffffff;
+    --gray-text: #666;
+    --border-color: #e0e0e0;
+}
+
+/* This body rule is now redundant due to the one above, but keeping it for context if it was intended to be overridden */
+body {
+    background-color: var(--bg-color);
+    padding-bottom: 80px;
+    /* Space for bottom nav */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e7ff;
+    /* Light blueish */
+    color: #4f46e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-text);
+    margin-bottom: 15px;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Force 3 columns */
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.action-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 110px;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-green);
+}
+
+.action-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--primary-green);
+    background: var(--primary-green-light);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Daily Focus */
+.daily-focus {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns grid */
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.focus-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    min-height: 100px;
+}
+
+.focus-card.full-width {
+    grid-column: span 2;
+    /* Full width for first two cards */
+}
+
+.focus-content h3 {
+    font-size: 13px;
+    color: var(--gray-text);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.focus-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.focus-icon {
+    font-size: 20px;
+}
+
+/* Specific Colors for Focus Icons */
+.icon-green {
+    color: #2ecc71;
+}
+
+.icon-orange {
+    color: #f39c12;
+}
+
+.icon-blue {
+    color: #3498db;
+}
+
+.icon-red {
+    color: #e74c3c;
+}
+
+/* Layout Adjustments for Right Sidebar */
+body {
+    padding-bottom: 0;
+    padding-right: 80px;
+    /* Space for right nav */
+}
+
+/* POS Billing Section */
+.pos-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.pos-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.pos-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+}
+
+.pos-input:focus {
+    border-color: var(--primary-green);
+}
+
+.pos-btn {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.pos-btn:hover {
+    background: #168f3e;
+}
+
+.bill-preview {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.bill-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f9f9f9;
+    font-size: 14px;
+    align-items: center;
+}
+
+.bill-item:last-child {
+    border-bottom: none;
+}
+
+.bill-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-color);
+    border-top: 2px solid #eee;
+    padding-top: 10px;
+}
+
+.generate-btn {
+    width: 100%;
+    margin-top: 15px;
+    background: var(--text-color);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    background-color: #ffebee;
+    border-radius: 50%;
+}
+
+/* Right Vertical Nav */
+.bottom-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 80px;
+    height: 100vh;
+    background: var(--card-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+    border-top: none;
+    border-left: 1px solid #eee;
+    gap: 30px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #999;
+    text-decoration: none;
+    font-size: 11px;
+    gap: 8px;
+    transition: color 0.2s;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.nav-item.active {
+    color: var(--primary-green);
+    border-right: 3px solid var(--primary-green);
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.nav-item:hover {
+    color: var(--primary-green);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding-right: 0;
+        padding-bottom: 70px;
+    }
+
+    .bottom-nav {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 12px 0;
+        border-left: none;
+        border-top: 1px solid #eee;
+        gap: 0;
+    }
+
+    .nav-item.active {
+        border-right: none;
+        border-top: 3px solid var(--primary-green);
+        /* Indicator on top for mobile */
+    }
+
+    .pos-form {
+        flex-direction: column;
+    }
+}
