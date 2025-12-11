@@ -54,6 +54,4 @@
 </div>
 
 <script src="../assets/js/script.js"></script>
-
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>

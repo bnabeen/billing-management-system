@@ -1,12 +1,17 @@
 <?php
-// Billing page (POS)
+require_once '../includes/auth.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sales / Billing</title>
+    <meta charset="UTF-8">
+    <title>Sales - Sumit Kirana Store</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
 <body>
-    <h1>Sales / Billing Page</h1>
-</body>
-</html>
+    <?php include '../includes/header.php'; ?>
+    <div class="container center-page">
+        <h1>Sales Page - Coming Soon</h1>
+    </div>
+    <?php include '../includes/footer.php'; ?>

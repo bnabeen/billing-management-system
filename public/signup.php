@@ -60,7 +60,7 @@
 
             <p class="auth-link">
                 Already have an account?
-                <a href="login.php">Login</a>
+                <a href="index.php">Login</a>
             </p>
 
         </div>
@@ -70,6 +70,4 @@
 </div>
 
 <script src="../assets/js/main.js"></script>
-
-</body>
-</html>
+<?php include '../includes/footer.php'; ?>

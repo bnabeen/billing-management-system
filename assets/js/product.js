@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (productForm) {
         productForm.addEventListener('submit', (e) => {
-            const name = document.getElementById('product_name')?.value.trim();
-            const price = parseFloat(document.getElementById('product_price')?.value);
-            const stock = parseInt(document.getElementById('product_stock')?.value);
+            const name = document.getElementById('product-name')?.value.trim();
+            const price = parseFloat(document.getElementById('product-price')?.value);
+            const stock = parseInt(document.getElementById('product-stock')?.value);
+            const alertStock = parseInt(document.getElementById('product-alert')?.value);
 
             let errors = [];
 
@@ -19,7 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (isNaN(stock) || stock < 0) {
-                errors.push('Stock must be a non-negative number.');
+                errors.push('Stock cannot be negative.');
+            }
+
+            if (isNaN(alertStock) || alertStock < 0) {
+                errors.push('Alert stock cannot be negative.');
             }
 
             if (errors.length > 0) {
@@ -28,14 +33,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Delete confirmation
-    const deleteButtons = document.querySelectorAll('.delete-product');
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            if (!confirm('Are you sure you want to delete this product?')) {
-                e.preventDefault();
-            }
-        });
-    });
 });

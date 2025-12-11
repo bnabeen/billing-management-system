@@ -73,7 +73,7 @@ A comprehensive Point of Sale (POS) and inventory management system designed for
 │
 ├── /includes/              # Reusable components
 │   ├── header.php
-│   ├── sidebar.php
+│   ├── navbar.php
 │   ├── footer.php
 │   └── auth.php
 │

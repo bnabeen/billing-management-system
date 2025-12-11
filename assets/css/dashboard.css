@@ -9,11 +9,68 @@
     --border-color: #e0e0e0;
 }
 
+/* Top Navbar */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-green);
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.navbar-item {
+    color: var(--gray-text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+    padding: 5px 0;
+    border-bottom: 2px solid transparent;
+}
+
+.navbar-item:hover {
+    color: var(--primary-green);
+}
+
+.navbar-item.active {
+    color: var(--primary-green);
+    border-bottom: 2px solid var(--primary-green);
+}
+
+.navbar-item.logout {
+    color: #e74c3c;
+}
+
+.navbar-item.logout:hover {
+    color: #c0392b;
+}
+
 /* This body rule is now redundant due to the one above, but keeping it for context if it was intended to be overridden */
 body {
     background-color: var(--bg-color);
-    padding-bottom: 80px;
-    /* Space for bottom nav */
+    padding-bottom: 0;
+    padding-top: 70px;
+    /* Space for top navbar */
 }
 
 .container {
@@ -168,179 +225,54 @@ body {
     color: #e74c3c;
 }
 
-/* Layout Adjustments for Right Sidebar */
+
 body {
     padding-bottom: 0;
-    padding-right: 80px;
-    /* Space for right nav */
+    padding-right: 0;
+    /* Remove right nav spacing */
 }
 
-/* POS Billing Section */
-.pos-section {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
 
-.pos-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
 
-.pos-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    outline: none;
-}
-
-.pos-input:focus {
-    border-color: var(--primary-green);
-}
-
-.pos-btn {
-    background: var(--primary-green);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.pos-btn:hover {
-    background: #168f3e;
-}
-
-.bill-preview {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.bill-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #f9f9f9;
-    font-size: 14px;
-    align-items: center;
-}
-
-.bill-item:last-child {
-    border-bottom: none;
-}
-
-.bill-total {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text-color);
-    border-top: 2px solid #eee;
-    padding-top: 10px;
-}
-
-.generate-btn {
-    width: 100%;
-    margin-top: 15px;
-    background: var(--text-color);
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.delete-btn:hover {
-    background-color: #ffebee;
-    border-radius: 50%;
-}
-
-/* Right Vertical Nav */
-.bottom-nav {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 80px;
-    height: 100vh;
-    background: var(--card-bg);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
-    z-index: 100;
-    border-top: none;
-    border-left: 1px solid #eee;
-    gap: 30px;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #999;
-    text-decoration: none;
-    font-size: 11px;
-    gap: 8px;
-    transition: color 0.2s;
-    width: 100%;
-    padding: 10px 0;
-}
-
-.nav-item.active {
-    color: var(--primary-green);
-    border-right: 3px solid var(--primary-green);
-}
-
-.nav-item svg {
-    width: 24px;
-    height: 24px;
-    fill: currentColor;
-}
-
-.nav-item:hover {
-    color: var(--primary-green);
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    body {
-        padding-right: 0;
-        padding-bottom: 70px;
-    }
-
-    .bottom-nav {
-        top: auto;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 12px 0;
-        border-left: none;
-        border-top: 1px solid #eee;
-        gap: 0;
-    }
-
-    .nav-item.active {
-        border-right: none;
-        border-top: 3px solid var(--primary-green);
-        /* Indicator on top for mobile */
-    }
-
-    .pos-form {
+    .top-navbar {
         flex-direction: column;
+        height: auto;
+        padding: 15px 20px;
+        gap: 15px;
     }
+
+    .navbar-menu {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navbar-item {
+        font-size: 12px;
+    }
+
+    body {
+        padding-top: 120px;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+}
+
+.dummy-box,
+.dummy-box-lg {
+    cursor: default;
+    opacity: 0.7;
+    border: 1px dashed #ccc;
+    box-shadow: none;
+}
+
+.dummy-box:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #ccc;
 }
