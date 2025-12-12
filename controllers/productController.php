@@ -3,7 +3,7 @@ session_start();
 require_once '../config/db.php';
 require_once '../models/Product.php';
 
-$product = new Product($conn);
+$product = new Product($conn, $_SESSION['business_id']);
 
 // Handle Create
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create') {

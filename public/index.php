@@ -25,6 +25,13 @@
             <form id="loginForm" action="../controllers/authController.php" method="POST">
 
                 <div class="form-group">
+                    <label>Business Username</label>
+                    <div class="input-box">
+                        <input type="text" id="business_username" name="business_username" placeholder="Enter shop ID">
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label>Username</label>
                     <div class="input-box">
                         <input type="text" id="username" name="username" placeholder="Enter your username">

@@ -263,16 +263,3 @@ body {
     }
 }
 
-.dummy-box,
-.dummy-box-lg {
-    cursor: default;
-    opacity: 0.7;
-    border: 1px dashed #ccc;
-    box-shadow: none;
-}
-
-.dummy-box:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: #ccc;
-}

@@ -3,7 +3,7 @@ require_once '../config/db.php';
 require_once '../models/Product.php';
 require_once '../includes/auth.php';
 
-$product = new Product($conn);
+$product = new Product($conn, $_SESSION['business_id']);
 $products_list = $product->getAll();
 
 $success = $_SESSION['success'] ?? '';
@@ -25,16 +25,7 @@ $pageTitle = "Products - Kirana Store";
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="top-navbar">
-        <div class="navbar-brand">Kirana Store</div>
-        <div class="navbar-menu">
-            <a href="dashboard.php" class="navbar-item">Home</a>
-            <a href="sales.php" class="navbar-item">Sales</a>
-            <a href="products.php" class="navbar-item">Products</a>
-            <a href="udharo.php" class="navbar-item">Udharo</a>
-            <a href="logout.php" class="navbar-item logout">Logout</a>
-        </div>
-    </nav>
+    <?php $page = 'products'; include '../includes/navbar.php'; ?>
 
     <div class="container">
         <div class="products-header">
