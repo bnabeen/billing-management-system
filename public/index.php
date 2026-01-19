@@ -22,7 +22,8 @@
             <h2>Welcome Back</h2>
             <p>Login to your account</p>
 
-            <form id="loginForm" action="../controllers/authController.php" method="POST">
+            <div id="errorMsg" class="error" style="color: red; font-size: 13px; margin-bottom: 10px;"></div>
+            <form id="loginForm" action="../controllers/authController.php" method="POST" onsubmit="return validateLogin()">
 
                 <div class="form-group">
                     <label>Business Username</label>
@@ -48,6 +49,25 @@
                 <button class="btn" type="submit">Login</button>
 
             </form>
+
+            <script>
+                function validateLogin() {
+                    const bus = document.getElementById('business_username').value.trim();
+                    const user = document.getElementById('username').value.trim();
+                    const pass = document.getElementById('password').value;
+                    const err = document.getElementById('errorMsg');
+                    
+                    if (!bus || !user || !pass) {
+                        err.innerText = "Please fill in all fields.";
+                        return false;
+                    }
+                    if (pass.length < 4) {
+                         err.innerText = "Password must be at least 4 characters.";
+                         return false;
+                    }
+                    return true;
+                }
+            </script>
 
             <p class="auth-link">
                 Don’t have an account?

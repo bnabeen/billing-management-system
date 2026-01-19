@@ -77,6 +77,7 @@ while ($row = mysqli_fetch_assoc($res)) {
                             <?php if ($current_role === 'owner'): ?>
                             <td>
                                 <?php if ($user['role'] !== 'owner'): // Cannot delete owner (self) easily ?>
+                                    <a href="permissions.php?user_id=<?php echo $user['id']; ?>" class="btn-edit" style="margin-right: 5px;">Permissions</a>
                                     <a href="../controllers/userController.php?action=delete&id=<?php echo $user['id']; ?>" class="btn-delete" onclick="return confirm('Remove this user?');">Remove</a>
                                     
                                     <?php if ($user['status'] === 'pending'): ?>

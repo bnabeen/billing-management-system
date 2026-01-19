@@ -25,6 +25,14 @@ while ($row = mysqli_fetch_assoc($result_products)) {
     $products[] = $row;
 }
 
+// Fetch Udharo Customers
+$udharo_customers = [];
+$q_uc = "SELECT * FROM udharo_customers WHERE business_id = '$business_id' ORDER BY name ASC";
+$r_uc = mysqli_query($conn, $q_uc);
+while ($row = mysqli_fetch_assoc($r_uc)) {
+    $udharo_customers[] = $row;
+}
+
 // Fetch Sales History
 $query_sales = "SELECT s.*, (SELECT COUNT(*) FROM sale_items si WHERE si.sale_id = s.id) as item_count 
                 FROM sales s 
@@ -88,7 +96,7 @@ if ($result_sales) {
                     </thead>
                     <tbody>
                         <?php foreach ($sales_list as $sale): ?>
-                            <tr>
+                            <tr onclick="window.location.href='bill_view.php?id=<?php echo $sale['id']; ?>'" style="cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='white'">
                                 <td><?php echo date('d M Y, h:i A', strtotime($sale['sale_date'])); ?></td>
                                 <td>
                                     <?php echo htmlspecialchars($sale['customer_name'] ?: 'Walk-in Customer'); ?>
@@ -97,7 +105,7 @@ if ($result_sales) {
                                     <?php endif; ?>
                                 </td>
                                 <td><?php echo $sale['item_count']; ?> items</td>
-                                <td class="price">₹<?php echo number_format($sale['total_amount'], 2); ?></td>
+                                <td class="price">रू<?php echo number_format($sale['total_amount'], 2); ?></td>
                                 <td>
                                     <!-- View/Delete Actions -->
                                     <a href="../controllers/salesController.php?action=delete&id=<?php echo $sale['id']; ?>" class="btn-delete" onclick="return confirm('Delete this sale record?');">Delete</a>
@@ -112,88 +120,112 @@ if ($result_sales) {
 
     <!-- New Sale Modal -->
     <div id="saleModal" class="modal">
-        <div class="modal-content" style="width: 800px; max-width: 95%;">
+        <div class="modal-content" style="width: 1000px; max-width: 98%; height: 90vh; display: flex; flex-direction: column;">
             <div class="modal-header">
-                <h2>New Sale Bill</h2>
+                <h2>Point of Sale (POS)</h2>
                 <button class="modal-close" onclick="closeSaleModal()">&times;</button>
             </div>
             
-            <form id="saleForm" action="../controllers/salesController.php" method="POST">
+            <form id="saleForm" action="../controllers/salesController.php" method="POST" style="flex: 1; display: flex; overflow: hidden;">
                 <input type="hidden" name="action" value="create">
                 
-                <div class="modal-body">
-                    <!-- Customer Details -->
-                    <div class="row">
-                        <div class="form-group" style="flex:1">
-                            <label>Customer Name</label>
-                            <input type="text" name="customer_name" placeholder="Walk-in Customer">
-                        </div>
-                        <div class="form-group" style="flex:1">
-                            <label>Phone Number</label>
-                            <input type="text" name="customer_phone" placeholder="Optional">
-                        </div>
+                <!-- Left Side: Product Selection -->
+                <div style="flex: 2; padding: 20px; border-right: 1px solid #eee; overflow-y: auto; background: #fcfcfc;">
+                    <div class="form-group">
+                        <label>Search Products (Name or Barcode)</label>
+                        <input type="text" id="posSearch" placeholder="Type to search..." onkeyup="filterPOSProducts()" style="padding: 12px; font-size: 16px;">
                     </div>
 
-                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
-                    <!-- Add Item Section -->
-                    <div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                        <h4>Add Item</h4>
-                        <div class="row" style="align-items: flex-end;">
-                            <div class="form-group" style="flex: 2;">
-                                <label>Product</label>
-                                <select id="productSelect" onchange="updatePrice()">
-                                    <option value="">Select Product...</option>
-                                    <?php foreach ($products as $p): ?>
-                                        <option value="<?php echo $p['id']; ?>" data-price="<?php echo $p['price']; ?>" data-name="<?php echo htmlspecialchars($p['name']); ?>">
-                                            <?php echo htmlspecialchars($p['name']); ?> (Default: ₹<?php echo $p['price']; ?>)
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                    <div id="posProductGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;">
+                        <?php foreach ($products as $p): ?>
+                            <div class="pos-item" 
+                                 onclick="addItemByID('<?php echo $p['id']; ?>', '<?php echo addslashes($p['name']); ?>', <?php echo $p['price']; ?>)"
+                                 data-name="<?php echo strtolower($p['name']); ?>"
+                                 data-barcode="<?php echo strtolower($p['barcode'] ?? ''); ?>"
+                                 style="background: white; border: 1px solid #ddd; padding: 10px; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s;">
+                                <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;"><?php echo htmlspecialchars($p['name']); ?></div>
+                                <div style="color: #4834d4; font-weight: 800;">रू<?php echo number_format($p['price'], 2); ?></div>
+                                <div style="font-size: 11px; color: <?php echo $p['stock'] < 10 ? 'red' : '#666'; ?>;">Stock: <?php echo $p['stock']; ?></div>
                             </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Price</label>
-                                <input type="number" id="itemPrice" step="0.01" placeholder="0.00">
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Qty</label>
-                                <input type="number" id="itemQty" value="1" min="1">
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn-add" onclick="addItem()" style="margin-bottom: 2px;">Add</button>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-
-                    <!-- Items Table -->
-                    <table class="sale-items-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th style="width: 80px;">Price</th>
-                                <th style="width: 60px;">Qty</th>
-                                <th style="width: 80px;">Subtotal</th>
-                                <th style="width: 40px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="itemsBody">
-                            <!-- Items will be added here -->
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="total-row">Grand Total:</td>
-                                <td class="total-row" id="grandTotal">₹0.00</td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                     <!-- Hidden Inputs for Items -->
-                    <div id="hiddenInputs"></div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeSaleModal()">Cancel</button>
-                    <button type="submit" class="btn-submit">Save Bill</button>
+                <!-- Right Side: Cart & Payment -->
+                <div style="flex: 1.5; padding: 20px; display: flex; flex-direction: column;">
+                    <div style="flex: 1; overflow-y: auto; margin-bottom: 20px;">
+                        <h4 style="margin-top:0">Shopping Cart</h4>
+                        <table class="sale-items-table" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th style="width: 50px;">Qty</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsBody"></tbody>
+                        </table>
+                        <div id="hiddenInputs"></div>
+                    </div>
+
+                    <div style="border-top: 2px solid #eee; padding-top: 15px;">
+                        
+                        <!-- Subtotal -->
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px;">
+                            <span style="color: #666;">Subtotal:</span>
+                            <span id="subTotal">रू0.00</span>
+                        </div>
+
+                        <!-- Discount -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 10px;">
+                            <span style="color: #666;">Discount (रू):</span>
+                            <input type="number" name="discount" id="discountInput" value="0" min="0" step="1" 
+                                   style="width: 80px; padding: 5px; text-align: right; border: 1px solid #ddd; border-radius: 4px;"
+                                   oninput="renderCart()">
+                        </div>
+
+                        <!-- Grand Total -->
+                        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 900; margin-bottom: 15px;">
+                            <span>Grand Total:</span>
+                            <span id="grandTotal" style="color: #4834d4;">रू0.00</span>
+                        </div>
+                        
+                        <input type="hidden" name="final_total" id="finalTotalInput">
+
+                        <!-- Customer Section -->
+                        <div class="form-group" style="background: #f8f9fa; padding: 10px; border-radius: 8px;">
+                            <label style="font-size: 12px; color: #666;">Customer (Optional for Cash)</label>
+                            
+                            <!-- Search/Select Existing -->
+                            <select name="udharo_customer_id" id="udharoCustomer" onchange="onCustomerSelect()" style="padding: 8px; font-size: 13px; margin-bottom: 10px;">
+                                <option value="">-- Select Existing Customer --</option>
+                                <?php foreach ($udharo_customers as $uc): ?>
+                                    <option value="<?php echo $uc['id']; ?>" data-name="<?php echo htmlspecialchars($uc['name']); ?>" data-phone="<?php echo $uc['phone']; ?>">
+                                        <?php echo htmlspecialchars($uc['name']); ?> (<?php echo $uc['phone']; ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <!-- New/Walk-in Inputs -->
+                            <div class="row" style="gap: 5px;">
+                                <input type="text" name="customer_name" id="custName" placeholder="Name (New/Walk-in)" style="flex: 1; padding: 8px;">
+                                <input type="text" name="customer_phone" id="custPhone" placeholder="Phone" style="flex: 1; padding: 8px;">
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="form-group">
+                            <label>Payment Method</label>
+                            <select name="payment_method" id="paymentMethod" style="padding: 10px; font-weight: bold; width: 100%;">
+                                <option value="cash">Cash Payment</option>
+                                <option value="credit">Udharo (Credit)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="width: 100%; padding: 15px; font-size: 18px; font-weight: bold; background: #10ac84;">Generate Bill</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -206,48 +238,40 @@ if ($result_sales) {
         function openNewSaleModal() {
             modal.style.display = 'flex';
             cart = [];
+            document.getElementById('discountInput').value = 0;
+            document.getElementById('udharoCustomer').value = "";
+            document.getElementById('custName').value = "";
+            document.getElementById('custPhone').value = "";
             renderCart();
+            document.getElementById('posSearch').focus();
         }
 
         function closeSaleModal() {
             modal.style.display = 'none';
         }
 
-        function updatePrice() {
-            const select = document.getElementById('productSelect');
-            const option = select.options[select.selectedIndex];
-            if (option && option.dataset.price) {
-                document.getElementById('itemPrice').value = option.dataset.price;
-            }
+        function filterPOSProducts() {
+            const query = document.getElementById('posSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.pos-item');
+            items.forEach(item => {
+                const name = item.dataset.name;
+                const barcode = item.dataset.barcode;
+                if (name.includes(query) || barcode.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
 
-        function addItem() {
-            const select = document.getElementById('productSelect');
-            const productId = select.value;
-            const productName = select.options[select.selectedIndex].dataset.name;
-            const price = parseFloat(document.getElementById('itemPrice').value);
-            const qty = parseInt(document.getElementById('itemQty').value);
-
-            if (!productId || isNaN(price) || isNaN(qty) || qty <= 0) {
-                alert("Please select a valid product, price, and quantity.");
-                return;
-            }
-
-            // Check if exists
-            const existing = cart.find(item => item.id === productId);
+        function addItemByID(id, name, price) {
+            const existing = cart.find(item => item.id === id);
             if (existing) {
-                existing.qty += qty;
-                existing.price = price; // Update price to latest
+                existing.qty += 1;
             } else {
-                cart.push({ id: productId, name: productName, price: price, qty: qty });
+                cart.push({ id: id, name: name, price: price, qty: 1 });
             }
-
             renderCart();
-            
-            // Reset fields
-            select.value = "";
-            document.getElementById('itemPrice').value = "";
-            document.getElementById('itemQty').value = "1";
         }
 
         function removeItem(index) {
@@ -258,7 +282,9 @@ if ($result_sales) {
         function renderCart() {
             const tbody = document.getElementById('itemsBody');
             const hiddenDiv = document.getElementById('hiddenInputs');
-            const totalEl = document.getElementById('grandTotal');
+            const subTotalEl = document.getElementById('subTotal');
+            const grandTotalEl = document.getElementById('grandTotal');
+            const discountInput = document.getElementById('discountInput');
             
             tbody.innerHTML = "";
             hiddenDiv.innerHTML = "";
@@ -269,19 +295,21 @@ if ($result_sales) {
                 const subtotal = item.price * item.qty;
                 total += subtotal;
 
-                // Table Row
                 const row = `
                     <tr>
                         <td>${item.name}</td>
                         <td>${item.price.toFixed(2)}</td>
-                        <td>${item.qty}</td>
+                        <td>
+                            <input type="number" value="${item.qty}" min="1" 
+                                   style="width: 50px; padding: 2px;" 
+                                   onchange="updateQty(${index}, this.value)">
+                        </td>
                         <td>${subtotal.toFixed(2)}</td>
                         <td><span class="remove-item" onclick="removeItem(${index})">&times;</span></td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
 
-                // Hidden Inputs
                 hiddenDiv.innerHTML += `
                     <input type="hidden" name="items[${index}][product_id]" value="${item.id}">
                     <input type="hidden" name="items[${index}][quantity]" value="${item.qty}">
@@ -289,7 +317,46 @@ if ($result_sales) {
                 `;
             });
 
-            totalEl.innerText = "₹" + total.toFixed(2);
+            // Calculate Totals
+            let discount = parseFloat(discountInput.value) || 0;
+            let finalTotal = total - discount;
+            if (finalTotal < 0) finalTotal = 0;
+
+            subTotalEl.innerText = "रू" + total.toFixed(2);
+            grandTotalEl.innerText = "रू" + finalTotal.toFixed(2);
+            
+            // Set hidden field for total if backend needs it, or backend handles it?
+            // Controller expects total to be calculated from items, but now we have discount.
+            // We should pass discount to controller.
+            // I'll add a hidden input for discount just in case, but the input name="discount" handles it.
+        }
+
+        function updateQty(index, val) {
+            const qty = parseInt(val);
+            if (qty > 0) {
+                cart[index].qty = qty;
+                renderCart();
+            }
+        }
+
+        function onCustomerSelect() {
+            const select = document.getElementById('udharoCustomer');
+            const nameInput = document.getElementById('custName');
+            const phoneInput = document.getElementById('custPhone');
+            
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (select.value) {
+                nameInput.value = selectedOption.getAttribute('data-name');
+                phoneInput.value = selectedOption.getAttribute('data-phone');
+                nameInput.readOnly = true;
+                // phoneInput.readOnly = true; // Maybe allow editing phone? Better not if it's linked to ID.
+            } else {
+                nameInput.value = "";
+                phoneInput.value = "";
+                nameInput.readOnly = false;
+                phoneInput.readOnly = false;
+            }
         }
         
         // Keydown Escape

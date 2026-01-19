@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $price = floatval($_POST['price'] ?? 0);
     $stock = intval($_POST['stock'] ?? 0);
     $alert_stock = intval($_POST['alert_stock'] ?? 5);
+    $purchase_price = floatval($_POST['purchase_price'] ?? 0);
     $barcode = trim($_POST['barcode'] ?? '');
     
     // Validation
@@ -22,7 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($stock < 0) $errors[] = "Stock cannot be negative";
     
     if (empty($errors)) {
-        $result = $product->create($name, $category, $price, $stock, $alert_stock, $barcode ?: null);
+        // Check for duplicate name
+        $check_query = "SELECT id FROM products WHERE business_id = '{$_SESSION['business_id']}' AND name = '$name'";
+        $check_result = mysqli_query($conn, $check_query);
+        if (mysqli_num_rows($check_result) > 0) {
+             $_SESSION['error'] = "Product with name '$name' already exists!";
+             header("Location: ../public/products.php");
+             exit;
+        }
+
+        $result = $product->create($name, $category, $price, $purchase_price, $stock, $alert_stock, $barcode ?: null);
         
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
@@ -44,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $price = floatval($_POST['price'] ?? 0);
     $stock = intval($_POST['stock'] ?? 0);
     $alert_stock = intval($_POST['alert_stock'] ?? 5);
+    $purchase_price = floatval($_POST['purchase_price'] ?? 0);
     $barcode = trim($_POST['barcode'] ?? '');
     
     // Validation
@@ -55,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($stock < 0) $errors[] = "Stock cannot be negative";
     
     if (empty($errors)) {
-        $result = $product->update($id, $name, $category, $price, $stock, $alert_stock, $barcode ?: null);
+        $result = $product->update($id, $name, $category, $price, $purchase_price, $stock, $alert_stock, $barcode ?: null);
         
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];

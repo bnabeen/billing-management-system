@@ -118,56 +118,88 @@
 
     function validateForm() {
         var phone = document.getElementById('phone').value;
-        var username = document.getElementById('username').value;
+        var username = document.getElementById('username').value.trim();
         var password = document.getElementById('password').value;
+        var confirm = document.getElementById('confirm').value;
         var phoneError = document.getElementById('phoneError');
         var userError = document.getElementById('userError');
         var passError = document.getElementById('passError');
         
+        // Reset errors
         phoneError.innerText = "";
         userError.innerText = "";
         passError.innerText = "";
+        phoneError.style.color = 'red';
+        passError.style.color = 'red';
         
         var isValid = true;
 
-        // Phone Validation
-        // - 10 digits
-        // - Start with 97 or 98
-        // - Only numbers
+        // 1. Phone Validation
         if (!/^\d+$/.test(phone)) {
-            phoneError.innerText = "Phone must contain only numbers.";
+            phoneError.innerText = "Only numbers allowed.";
+            isValid = false;
+        } else if (phone.length > 10) {
+            alert("Phone number cannot be more than 10 digits!");
+            phoneError.innerText = "Max 10 digits allowed.";
             isValid = false;
         } else if (phone.length !== 10) {
-            phoneError.innerText = "Phone number must be exactly 10 digits.";
+            phoneError.innerText = "Must be exactly 10 digits.";
             isValid = false;
-        } else if (!phone.startsWith("97") && !phone.startsWith("98")) {
-            phoneError.innerText = "Phone number must start with 97 or 98.";
+        } else if (!phone.startsWith("98") && !phone.startsWith("97")) {
+            phoneError.innerText = "Must start with 98 or 97.";
             isValid = false;
         }
 
-        // Username Validation
-        // - Not start with number
+        // 2. Username Validation
         if (/^\d/.test(username)) {
-            userError.innerText = "Username cannot start with a number.";
+            userError.innerText = "Cannot start with a number.";
+            isValid = false;
+        }
+        if (username.length < 3) {
+            userError.innerText = "Must be at least 3 characters.";
             isValid = false;
         }
 
-        // Password Validation
-        // - Mix of chars? (Let's enforce at least 6 chars for now)
-        // - Should not support email -> Check for '@'
-        if (password.includes('@') && password.includes('.')) {
-             // Heuristic for email
-             passError.innerText = "Password cannot be an email address.";
-             isValid = false;
+        // 3. Password Validation (Strong/Weak)
+        if (password.length < 6) {
+            passError.innerText = "Weak Password: Must be at least 6 characters.";
+            isValid = false;
+        } else {
+            // Check complexity
+            var hasUpper = /[A-Z]/.test(password);
+            var hasLower = /[a-z]/.test(password);
+            var hasNum = /\d/.test(password);
+            var hasSpl = /[!@#$%^&*]/.test(password);
+
+            if (!hasUpper || !hasLower || !hasNum || !hasSpl) {
+                passError.style.color = 'orange';
+                passError.innerText = "Medium Strength: Add Upper, Lower, Number & Symbol for Strong.";
+                // We allow medium but warn. If user insists on strict, uncommment below:
+                // isValid = false; 
+            } else {
+                 passError.style.color = 'green';
+                 passError.innerText = "Strong Password!";
+            }
         }
-        if (password.length < 4) {
-             // Basic length check
-             passError.innerText = "Password too short.";
-             isValid = false;
+
+        if (password !== confirm) {
+            alert("Passwords do not match!");
+            isValid = false;
         }
 
         return isValid;
     }
+
+    // Real-time phone check
+    document.getElementById('phone').addEventListener('input', function(e) {
+        if (this.value.length > 10) {
+            document.getElementById('phoneError').innerText = "Max 10 digits! Please check.";
+            alert("You have entered more than 10 digits!");
+            this.value = this.value.slice(0, 10);
+        } else {
+             document.getElementById('phoneError').innerText = "";
+        }
+    });
 </script>
 <!-- <script src="../assets/js/main.js"></script> -->
 <?php include '../includes/footer.php'; ?>

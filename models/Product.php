@@ -56,15 +56,15 @@ class Product {
     /**
      * Create new product
      */
-    public function create($name, $category, $price, $stock, $alert_stock = 5, $barcode = null) {
-        $sql = "INSERT INTO products (business_id, name, category, price, stock, alert_stock, barcode) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public function create($name, $category, $price, $purchase_price, $stock, $alert_stock = 5, $barcode = null) {
+        $sql = "INSERT INTO products (business_id, name, category, price, purchase_price, stock, alert_stock, barcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         
         if (!$stmt) {
             return ['success' => false, 'message' => 'Prepare failed: ' . $this->conn->error];
         }
         
-        $stmt->bind_param("issdiis", $this->business_id, $name, $category, $price, $stock, $alert_stock, $barcode);
+        $stmt->bind_param("issddiis", $this->business_id, $name, $category, $price, $purchase_price, $stock, $alert_stock, $barcode);
         
         if ($stmt->execute()) {
             return ['success' => true, 'id' => $this->conn->insert_id, 'message' => 'Product created successfully'];
@@ -76,16 +76,16 @@ class Product {
     /**
      * Update product
      */
-    public function update($id, $name, $category, $price, $stock, $alert_stock = 5, $barcode = null) {
+    public function update($id, $name, $category, $price, $purchase_price, $stock, $alert_stock = 5, $barcode = null) {
         // Enforce business_id in update to prevent editing others' data
-        $sql = "UPDATE products SET name=?, category=?, price=?, stock=?, alert_stock=?, barcode=? WHERE id=? AND business_id=?";
+        $sql = "UPDATE products SET name=?, category=?, price=?, purchase_price=?, stock=?, alert_stock=?, barcode=? WHERE id=? AND business_id=?";
         $stmt = $this->conn->prepare($sql);
         
         if (!$stmt) {
             return ['success' => false, 'message' => 'Prepare failed: ' . $this->conn->error];
         }
         
-        $stmt->bind_param("ssdiisii", $name, $category, $price, $stock, $alert_stock, $barcode, $id, $this->business_id);
+        $stmt->bind_param("ssddiisii", $name, $category, $price, $purchase_price, $stock, $alert_stock, $barcode, $id, $this->business_id);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Product updated successfully'];
@@ -98,6 +98,17 @@ class Product {
      * Delete product
      */
     public function delete($id) {
+        // First check if product is used in sale_items
+        $check_sql = "SELECT COUNT(*) as count FROM sale_items WHERE product_id = ?";
+        $check_stmt = $this->conn->prepare($check_sql);
+        $check_stmt->bind_param("i", $id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result()->fetch_assoc();
+        
+        if ($check_result['count'] > 0) {
+            return ['success' => false, 'message' => 'Cannot delete product: It has existing sales usage.'];
+        }
+
         $sql = "DELETE FROM products WHERE id=? AND business_id=?";
         $stmt = $this->conn->prepare($sql);
         
@@ -107,10 +118,15 @@ class Product {
         
         $stmt->bind_param("ii", $id, $this->business_id);
         
-        if ($stmt->execute()) {
-            return ['success' => true, 'message' => 'Product deleted successfully'];
-        } else {
-            return ['success' => false, 'message' => 'Execute failed: ' . $stmt->error];
+        try {
+            if ($stmt->execute()) {
+                return ['success' => true, 'message' => 'Product deleted successfully'];
+            } else {
+                return ['success' => false, 'message' => 'Execute failed: ' . $stmt->error];
+            }
+        } catch (mysqli_sql_exception $e) {
+            // Fallback catch in case of other constraints
+            return ['success' => false, 'message' => 'Deletion failed: Product is linked to other records.'];
         }
     }
     

@@ -94,7 +94,7 @@ unset($_SESSION['error']);
 
                 <div class="row">
                     <div class="form-group">
-                        <label for="price">Price (₹) *</label>
+                        <label for="price">Price (रू) *</label>
                         <input type="number" id="price" name="price" required placeholder="0.00" step="0.01" min="0" value="<?php echo floatval($prod['price']); ?>">
                     </div>
 

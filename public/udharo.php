@@ -41,6 +41,33 @@ if($res) {
             <button onclick="openAddCustomerModal()" class="btn-add">+ Add Customer</button>
         </div>
 
+        <!-- Udharo Summary -->
+        <?php
+        $total_receivable = 0;
+        $lifetime_credit = 0;
+        
+        // Calculate totals
+        foreach ($customers as $c) {
+            $total_receivable += $c['total_debt'];
+        }
+
+        // Get lifetime credit given
+        $q_life = "SELECT SUM(amount) as total FROM udharo_transactions WHERE customer_id IN (SELECT id FROM udharo_customers WHERE business_id = '$business_id') AND type = 'CREDIT'";
+        $res_life = mysqli_query($conn, $q_life);
+        $row_life = mysqli_fetch_assoc($res_life);
+        $lifetime_credit = $row_life['total'] ?? 0;
+        ?>
+        <div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); margin-bottom: 20px;">
+            <div class="stat-card" style="border-left: 5px solid #e74c3c;">
+                <div class="stat-label">Total Receivable (Current Debt)</div>
+                <div class="stat-value" style="color: #e74c3c;">रू<?php echo number_format($total_receivable, 2); ?></div>
+            </div>
+            <div class="stat-card" style="border-left: 5px solid #3498db;">
+                <div class="stat-label">Total Credit Given (Lifetime)</div>
+                <div class="stat-value" style="color: #3498db;">रू<?php echo number_format($lifetime_credit, 2); ?></div>
+            </div>
+        </div>
+
         <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
         <?php endif; ?>
@@ -70,7 +97,7 @@ if($res) {
                                 <td><?php echo htmlspecialchars($cust['name']); ?></td>
                                 <td><?php echo htmlspecialchars($cust['phone']); ?></td>
                                 <td class="<?php echo $cust['total_debt'] > 0 ? 'debt-high' : 'debt-low'; ?>">
-                                    ₹<?php echo number_format($cust['total_debt'], 2); ?>
+                                    रू<?php echo number_format($cust['total_debt'], 2); ?>
                                 </td>
                                 <td>
                                     <button class="btn-edit" onclick="openTransactionModal(<?php echo $cust['id']; ?>, '<?php echo htmlspecialchars($cust['name']); ?>', 'CREDIT')">Give Credit</button>
@@ -125,7 +152,7 @@ if($res) {
                 <p id="transInfo" style="margin-bottom: 15px; font-weight: bold;"></p>
 
                 <div class="form-group">
-                    <label>Amount (₹)</label>
+                    <label>Amount (रू)</label>
                     <input type="number" name="amount" step="0.01" required>
                 </div>
                 <div class="form-group">
@@ -196,12 +223,15 @@ if($res) {
                     data.forEach(item => {
                         const date = new Date(item.created_at).toLocaleString();
                         const cls = 'trans-' + item.type;
+                        const saleInfo = item.sale_id ? `<br><small style="color:#666">Sale #${item.sale_id}</small>` : '';
+                        const cashInfo = item.is_cash == 1 ? ` <span style="font-size:10px; background:#eee; padding:2px 4px; border-radius:3px;">CASH</span>` : '';
+                        
                         tbody.innerHTML += `
                             <tr>
                                 <td>${date}</td>
-                                <td class="${cls}">${item.type}</td>
-                                <td>${item.description || '-'}</td>
-                                <td class="${cls}">₹${item.amount}</td>
+                                <td class="${cls}">${item.type}${cashInfo}</td>
+                                <td>${item.description || '-'}${saleInfo}</td>
+                                <td class="${cls}">रू${item.amount}</td>
                             </tr>
                         `;
                     });

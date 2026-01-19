@@ -52,7 +52,7 @@ $pageTitle = "Products - Kirana Store";
             </div>
             <div class="stat-card">
                 <div class="stat-label">Total Value</div>
-                <div class="stat-value">₹<?php echo number_format(array_sum(array_map(function($p) { return $p['price'] * $p['stock']; }, $products_list)), 2); ?></div>
+                <div class="stat-value">रू<?php echo number_format(array_sum(array_map(function($p) { return $p['price'] * $p['stock']; }, $products_list)), 2); ?></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Low Stock Items</div>
@@ -72,7 +72,8 @@ $pageTitle = "Products - Kirana Store";
                         <tr>
                             <th>Product Name</th>
                             <th>Category</th>
-                            <th>Price</th>
+                            <th>Purchase Price</th>
+                            <th>Sale Price</th>
                             <th>Stock</th>
                             <th>Alert Level</th>
                             <th>Actions</th>
@@ -83,7 +84,8 @@ $pageTitle = "Products - Kirana Store";
                             <tr>
                                 <td class="product-name"><?php echo htmlspecialchars($prod['name']); ?></td>
                                 <td><span class="category"><?php echo htmlspecialchars($prod['category']); ?></span></td>
-                                <td class="price">₹<?php echo number_format($prod['price'], 2); ?></td>
+                                <td class="price">रू<?php echo number_format($prod['purchase_price'] ?? 0, 2); ?></td>
+                                <td class="price">रू<?php echo number_format($prod['price'], 2); ?></td>
                                 <td class="<?php echo $prod['stock'] <= ($prod['alert_stock'] ?? 10) ? 'stock-low' : 'stock-ok'; ?>">
                                     <?php echo intval($prod['stock']); ?> units
                                     <?php if ($prod['stock'] <= ($prod['alert_stock'] ?? 10)): ?>
@@ -99,6 +101,7 @@ $pageTitle = "Products - Kirana Store";
                                             data-name="<?php echo htmlspecialchars($prod['name']); ?>"
                                             data-category="<?php echo htmlspecialchars($prod['category']); ?>"
                                             data-price="<?php echo floatval($prod['price']); ?>"
+                                            data-purchase-price="<?php echo floatval($prod['purchase_price'] ?? 0); ?>"
                                             data-stock="<?php echo intval($prod['stock']); ?>"
                                             data-alert="<?php echo intval($prod['alert_stock'] ?? 5); ?>"
                                             data-barcode="<?php echo htmlspecialchars($prod['barcode'] ?? ''); ?>"
@@ -147,7 +150,12 @@ $pageTitle = "Products - Kirana Store";
                     </div>
 
                     <div class="form-group">
-                        <label for="product-price">Price (₹) *</label>
+                        <label for="product-purchase-price">Purchase Price (रू) *</label>
+                        <input type="number" id="product-purchase-price" name="purchase_price" required placeholder="0.00" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product-price">Sale Price (रू) *</label>
                         <input type="number" id="product-price" name="price" required placeholder="0.00" step="0.01" min="0">
                     </div>
                 </div>
@@ -204,6 +212,7 @@ $pageTitle = "Products - Kirana Store";
             document.getElementById('product-name').value = data.name;
             document.getElementById('product-category').value = data.category;
             document.getElementById('product-price').value = data.price;
+            document.getElementById('product-purchase-price').value = data.purchasePrice;
             document.getElementById('product-stock').value = data.stock;
             document.getElementById('product-alert').value = data.alert;
             document.getElementById('product-barcode').value = data.barcode;
